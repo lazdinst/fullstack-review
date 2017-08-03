@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-// import axios from 'axios';
+import axios from 'axios';
 import $ from 'jquery';
 import Search from './components/Search.jsx';
 import RepoList from './components/RepoList.jsx';
@@ -9,53 +9,72 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = { 
-      repos: []
+      repos: [],
+      steamId: ''
     };
     this.search.bind(this);
-    console.log('FCK YOU')
-
   }
 
   search (term) {
     console.log('Search initiated; Term: ', term);
     //When a user has entered an input
     //Generate a post to the Server (Server will GET from Github)
-    $.post('/repos', term, function(data){
-      console.log('Sucessful POST to Server');
-      console.log('This POST req is the GET req to Github');
-      console.log('Data: ', data);
-      //What kind of data comes back? Array or Object?
+    // $.post('/repos', term, function(data){
+    //   console.log('Sucessful POST to Server');
+    //   console.log('This POST req is the GET req to Github');
+    //   console.log('Data: ', data);
+    //   //this.setState()
 
-      //Update the Repos State
-      // this.setState()
+    // });
 
-    });
-
-    //We need to post fom the front end to the back and
-    //with that route and call the save()
+    axios.post('/repos', term)
+      .then( (response) => {
+          response.end();
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }
 
-  // load () {
-  //   $.get('/repos', function(req, res){
-  //     console.log(res);
-  //   });
-  // }
-
   componentDidMount() {
-    console.log('MOUNTING');
-    $.ajax({
-      url: '/repos',
-      type: 'GET',
-      success: (data) => {
-        console.log(data);
+    console.log('Component Mount Sucessful!');
+    axios.get('/repos')
+      .then( (response) => {
+        console.log('Loaded Repos from Database:', 
+          response.data);
         this.setState({
-          repos: data
+          repos: response.data
         });
-      },
-      error: function(err) {
-        console.log('ERROR ', err);
-      }
-    });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+    axios.get('/api/steam')
+      .then( (response) => {
+        console.log('Steam ID Retreived: ', 
+          response.steamId);
+        this.setState({
+          steamId: response.steamId
+        });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+    // $.ajax({
+    //   url: '/repos',
+    //   type: 'GET',
+    //   success: (data) => {
+    //     console.log(data);
+    //     this.setState({
+    //       repos: data
+    //     });
+    //   },
+    //   error: function(err) {
+    //     console.log('ERROR ', err);
+    //   }
+    // });
   }
 
   render () {

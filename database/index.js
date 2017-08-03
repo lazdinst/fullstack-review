@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/fetcher');
+const url = 'mongodb://localhost/fetcher';
+mongoose.connect(url);
 
 let repoSchema = mongoose.Schema({
-  // TODO: your schema here!
-
   'name': String, //Name of Repo
   'full_name': String, //Full Name, starting with username then / RepoName
   'html_url': String,
@@ -17,7 +16,7 @@ let save = (newRepos) => {
       if(err) {
         console.log(err);
       } else {
-        console.log('New Repo Added')
+        console.log('New Repo Added to the Database')
         console.log(repo);
       }
     });
@@ -25,7 +24,6 @@ let save = (newRepos) => {
 }
 
 let find = (callback) => {
-  console.log('I got here');
   Repo.find({}, function(err, repos){
     if(err) {
       console.log(err)
