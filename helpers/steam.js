@@ -27,11 +27,10 @@ let getAllGameIds = (user) => {
   //55DA5B587373A31116CAD4B8B4BE3F05&steamids=76561197986069784'
   let url = 'http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=' 
   + key + '&vanityurl=' + vanityURL;
+
   console.log(url);
   return axios.get(url)
     .then(function (response) {
-      console.log('I GOT HERe')
-      console.log(response);
       return response.data;
     })
     .catch(function (error) {

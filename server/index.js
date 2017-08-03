@@ -11,16 +11,22 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/../client/dist'));
 
+
+
+//GET Github Data, Save to MongoDB
 app.post('/repos', function (req, res, next) {
   var username = Object.keys(req.body)[0];
   githubHelper.getReposByUsername(username)
-  .then((response) => {
-    mongoHelper.save(response);
+  .then((data) => {
+    mongoHelper.save(data)
+    res.send('Sucess')
   })
   .catch(function(err){
     console.log(err);
   });
 });
+
+
 
 app.get('/repos', function (req, res) {
   mongoHelper.find(function(repos){
@@ -28,17 +34,17 @@ app.get('/repos', function (req, res) {
   });
 });
 
-app.get('/api/steam', function (req, res) {
-  steam.getAllGameIds()
-    .then((gameIds) => {
-      //console.log(gameIds);
-      steamHelper.save()
-      return gameIds;
-    })
-    .catch((err) => {
-      throw err;      
-    })
-});
+// app.get('/api/steam', function (req, res) {
+//   steam.getAllGameIds()
+//     .then((gameIds) => {
+//       //console.log(gameIds);
+//       steamHelper.save()
+//       return gameIds;
+//     })
+//     .catch((err) => {
+//       throw err;      
+//     })
+// });
 let port = 1128;
 
 app.listen(port, function() {

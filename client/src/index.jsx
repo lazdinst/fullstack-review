@@ -4,6 +4,10 @@ import axios from 'axios';
 import $ from 'jquery';
 import Search from './components/Search.jsx';
 import RepoList from './components/RepoList.jsx';
+import RepoListEntry from './components/RepoListEntry.jsx';
+import Navbar from './components/Navbar.jsx';
+import './style.css';
+//import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 class App extends React.Component {
   constructor(props) {
@@ -16,28 +20,19 @@ class App extends React.Component {
   }
 
   search (term) {
-    console.log('Search initiated; Term: ', term);
-    //When a user has entered an input
-    //Generate a post to the Server (Server will GET from Github)
-    // $.post('/repos', term, function(data){
-    //   console.log('Sucessful POST to Server');
-    //   console.log('This POST req is the GET req to Github');
-    //   console.log('Data: ', data);
-    //   //this.setState()
-
-    // });
-
+    console.log('Search initiated; Username: ', term);
     axios.post('/repos', term)
-      .then( (response) => {
-          response.end();
+      .then( (res) => {
+        console.log('I AM NOW HERERE DUDE');
+        this.update();
       })
       .catch(function (error) {
         console.log(error);
       });
   }
 
-  componentDidMount() {
-    console.log('Component Mount Sucessful!');
+  update() {
+    console.log('I got to UPDATE')
     axios.get('/repos')
       .then( (response) => {
         console.log('Loaded Repos from Database:', 
@@ -49,39 +44,36 @@ class App extends React.Component {
       .catch(function (error) {
         console.log(error);
       });
+  }
 
-    axios.get('/api/steam')
-      .then( (response) => {
-        console.log('Steam ID Retreived: ', 
-          response.steamId);
-        this.setState({
-          steamId: response.steamId
-        });
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+  componentDidMount() {
+    console.log('Component Mount Sucessful!');
+    this.update();
 
-    // $.ajax({
-    //   url: '/repos',
-    //   type: 'GET',
-    //   success: (data) => {
-    //     console.log(data);
+    // axios.get('/api/steam')
+    //   .then( (response) => {
+    //     console.log('Steam ID Retreived: ', 
+    //       response.steamId);
     //     this.setState({
-    //       repos: data
+    //       steamId: response.steamId
     //     });
-    //   },
-    //   error: function(err) {
-    //     console.log('ERROR ', err);
-    //   }
-    // });
+    //   })
+    //   .catch(function (error) {
+    //     console.log(error);
+    //   });
   }
 
   render () {
     return (<div>
-      <h1>Github Fetcher</h1>
-      <RepoList repos={this.state.repos}/>
-      <Search onSearch={this.search.bind(this)}/>
+      <Navbar />
+      <div className="section group">
+        <div className="col span_1_of_3">
+          <Search onSearch={this.search.bind(this)}/>
+        </div>
+        <div className="col span_2_of_3">
+          <RepoList repos={this.state.repos}/>
+        </div>
+      </div>
     </div>)
   }
 }
