@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+// import axios from 'axios';
 import $ from 'jquery';
 import Search from './components/Search.jsx';
 import RepoList from './components/RepoList.jsx';
@@ -11,6 +12,7 @@ class App extends React.Component {
       repos: []
     };
     this.search.bind(this);
+    console.log('FCK YOU')
 
   }
 
@@ -22,7 +24,6 @@ class App extends React.Component {
       console.log('Sucessful POST to Server');
       console.log('This POST req is the GET req to Github');
       console.log('Data: ', data);
-
       //What kind of data comes back? Array or Object?
 
       //Update the Repos State
@@ -34,8 +35,27 @@ class App extends React.Component {
     //with that route and call the save()
   }
 
-  componentDidMount() {
+  // load () {
+  //   $.get('/repos', function(req, res){
+  //     console.log(res);
+  //   });
+  // }
 
+  componentDidMount() {
+    console.log('MOUNTING');
+    $.ajax({
+      url: '/repos',
+      type: 'GET',
+      success: (data) => {
+        console.log(data);
+        this.setState({
+          repos: data
+        });
+      },
+      error: function(err) {
+        console.log('ERROR ', err);
+      }
+    });
   }
 
   render () {

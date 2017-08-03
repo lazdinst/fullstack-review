@@ -5,8 +5,8 @@ let repoSchema = mongoose.Schema({
   // TODO: your schema here!
 
   'name': String, //Name of Repo
-  'full_name': String //Full Name, starting with username then / RepoName
-
+  'full_name': String, //Full Name, starting with username then / RepoName
+  'html_url': String,
 });
 
 let Repo = mongoose.model('Repo', repoSchema);
@@ -24,4 +24,17 @@ let save = (newRepos) => {
   });
 }
 
+let find = (callback) => {
+  console.log('I got here');
+  Repo.find({}, function(err, repos){
+    if(err) {
+      console.log(err)
+    } else {
+      console.log(repos);
+      callback(repos)
+    }
+  });
+}
+
 module.exports.save = save;
+module.exports.find = find;

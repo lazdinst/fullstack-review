@@ -20,8 +20,10 @@ app.post('/repos', function (req, res, next) {
 });
 
 app.get('/repos', function (req, res) {
-  // TODO - your code here!
-  // This route should send back the top 25 repos
+  console.log('I GOT HERER');
+  mongoHelper.find(function(repos){
+    res.json(repos);
+  });
 });
 
 let port = 1128;
