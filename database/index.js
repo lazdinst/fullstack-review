@@ -3,11 +3,11 @@ const url = 'mongodb://localhost/fetcher';
 mongoose.connect(url, { useMongoClient: true });
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-
+mongoose.Promise = global.Promise;
 
 let repoSchema = mongoose.Schema({
-  name: String, //Name of Repo
-  full_name: { type: String, unique: true }, //Full Name, starting with username then / RepoName
+  name: String,
+  full_name: { type: String, unique: true },
   html_url: { type: String, unique: true },
   owner: {
     avatar_url: String,
@@ -42,27 +42,3 @@ let find = (callback) => {
 
 module.exports.save = save;
 module.exports.find = find;
-
-// let save = (newRepos) => {
-//   newRepos.forEach(function(newRepo){
-//     Repo.create(newRepo, function(err, repo) {
-//       if(err) {
-//         console.log(err);
-//       } else {
-//         console.log('New Repo Added to the Database')
-//         console.log(repo);
-//       }
-//     });
-//   });
-// }
-
-// let find = (callback) => {
-//   Repo.find({}, function(err, repos){
-//     if(err) {
-//       console.log(err)
-//     } else {
-//       console.log(repos);
-//       callback(repos)
-//     }
-//   });
-// }

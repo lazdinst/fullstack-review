@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import axios from 'axios';
 import $ from 'jquery';
 import Search from './components/Search.jsx';
+import NavSearch from './components/NavSearch.jsx';
 import RepoList from './components/RepoList.jsx';
 import RepoListEntry from './components/RepoListEntry.jsx';
 import Navbar from './components/Navbar.jsx';
@@ -14,16 +15,18 @@ class App extends React.Component {
     super(props);
     this.state = { 
       repos: [],
-      steamId: ''
+      steamNickname: '',
+      steamId: '',
+      playerInfo: {},
+      gamesOwned: []
     };
     this.search.bind(this);
+    this.navSearch.bind(this);
   }
 
   search (term) {
-    console.log('Search initiated; Username: ', term);
     axios.post('/repos', term)
       .then( (res) => {
-        console.log('I AM NOW HERERE DUDE');
         this.update();
       })
       .catch(function (error) {
@@ -32,7 +35,6 @@ class App extends React.Component {
   }
 
   update() {
-    console.log('I got to UPDATE')
     axios.get('/repos')
       .then( (response) => {
         console.log('Loaded Repos from Database:', 
@@ -46,34 +48,66 @@ class App extends React.Component {
       });
   }
 
-  componentDidMount() {
-    console.log('Component Mount Sucessful!');
-    this.update();
+  navSearch(steamNickName) {
+    axios.post('/api/steam', steamNickName)
+      .then( (steamdata) => {
+        var steamid = steamdata.data.response.steamid;
+        console.log('SUCESS! Steam ID:', steamid);
+        this.getPlayerInfoFromSteamID(steamid);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
 
-    // axios.get('/api/steam')
-    //   .then( (response) => {
-    //     console.log('Steam ID Retreived: ', 
-    //       response.steamId);
-    //     this.setState({
-    //       steamId: response.steamId
-    //     });
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error);
-    //   });
+  getPlayerInfoFromSteamID (steamid) {
+    axios.post('/api/steamplayerinfo', steamid)
+      .then( (playerInfo) => {
+        var player = playerInfo.data.response.players[0];
+        this.getGameInfoFromSteamID(steamid);
+        this.setState({
+          playerInfo: player
+        });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
+  getGameInfoFromSteamID (steamid) {
+    axios.post('/api/steamgamesowned', steamid)
+      .then( (gamesOwned) => {
+        console.log('SUCESS! gamesOwned:', gamesOwned);
+        var games = gamesOwned.data.response.games;
+        games.forEach((game)=>{
+          console.log(game)
+        })
+        this.setState({
+          gamesOwned: games
+        });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
+  componentDidMount() {
+    this.update();
   }
 
   render () {
     return (<div>
-      <Navbar />
-      <div className="section group">
-        <div className="col span_1_of_3">
-          <Search onSearch={this.search.bind(this)}/>
+      <Navbar onNavSearch={this.navSearch.bind(this)}/>
+        <div className='wrapper'>
+          <div className="section group">
+            <div className="col span_1_of_3">
+              <Search onSearch={this.search.bind(this)}/>
+            </div>
+            <div className="col span_2_of_3">
+              <RepoList repos={this.state.repos}/>
+            </div>
+          </div>
         </div>
-        <div className="col span_2_of_3">
-          <RepoList repos={this.state.repos}/>
-        </div>
-      </div>
     </div>)
   }
 }

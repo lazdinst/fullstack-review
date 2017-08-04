@@ -11,8 +11,6 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/../client/dist'));
 
-
-
 //GET Github Data, Save to MongoDB
 app.post('/repos', function (req, res, next) {
   var username = Object.keys(req.body)[0];
@@ -26,25 +24,49 @@ app.post('/repos', function (req, res, next) {
   });
 });
 
-
-
+//GET ALL THE MongoDB Repos
 app.get('/repos', function (req, res) {
   mongoHelper.find(function(repos){
     res.json(repos);
   });
 });
 
-// app.get('/api/steam', function (req, res) {
-//   steam.getAllGameIds()
-//     .then((gameIds) => {
-//       //console.log(gameIds);
-//       steamHelper.save()
-//       return gameIds;
-//     })
-//     .catch((err) => {
-//       throw err;      
-//     })
-// });
+//POST Req to SteamHelper GET to SteamID
+app.post('/api/steam', function (req, res, next) {
+  var vanity = Object.keys(req.body)[0];
+  steam.getSteamIdByVanityURL(vanity)
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      throw err;      
+    })
+});
+
+//POST Req to SteamHelper to GET PlayerInfo by Steam id
+app.post('/api/steamplayerinfo', function (req, res, next) {
+  var steamID = Object.keys(req.body)[0];
+  steam.getPlayerInfoBySteamID(steamID)
+    .then((data) => {
+      res.json(data);
+    })
+    .catch((err) => {
+      throw err;      
+    })
+});
+
+//POST Req to SteamHelper to GET GamesOwned by Steam id
+app.post('/api/steamgamesowned', function (req, res, next) {
+  var steamID = Object.keys(req.body)[0];
+  steam.getGamesOwnedBySteamID(steamID)
+    .then((data) => {
+      res.json(data);
+    })
+    .catch((err) => {
+      throw err;      
+    })
+});
+
 let port = 1128;
 
 app.listen(port, function() {
