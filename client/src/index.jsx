@@ -16,7 +16,7 @@ class App extends React.Component {
     this.state = { 
       repos: [],
       steamNickname: '',
-      steamId: '',
+      steamid: '',
       playerInfo: {},
       gamesOwned: []
     };
@@ -52,7 +52,11 @@ class App extends React.Component {
     axios.post('/api/steam', steamNickName)
       .then( (steamdata) => {
         var steamid = steamdata.data.response.steamid;
-        console.log('SUCESS! Steam ID:', steamid);
+        console.log('SUCCESS! Steam ID:', steamid);
+        this.setState({
+          steamid: steamid,
+          steamNickname: steamNickName
+        });
         this.getPlayerInfoFromSteamID(steamid);
       })
       .catch(function (error) {
@@ -77,7 +81,7 @@ class App extends React.Component {
   getGameInfoFromSteamID (steamid) {
     axios.post('/api/steamgamesowned', steamid)
       .then( (gamesOwned) => {
-        console.log('SUCESS! gamesOwned:', gamesOwned);
+        console.log('SUCCESS! gamesOwned:', gamesOwned);
         var games = gamesOwned.data.response.games;
         games.forEach((game)=>{
           console.log(game)
@@ -93,6 +97,20 @@ class App extends React.Component {
 
   componentDidMount() {
     this.update();
+    this.getAllSteamGameIds();
+  }
+
+  //Need to call this function on initalization
+  //This is a one time call, Can I get away with only doing it once?
+  //Impacts: Games not having the appropariate app ID to app name ref
+  getAllSteamGameIds(){
+    axios.post('/api/steamgameids')
+      .then( (allSteamGames) => {
+        console.log('SUCCESS! allSteamGames:');
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }
 
   render () {

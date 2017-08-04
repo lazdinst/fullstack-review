@@ -7,7 +7,6 @@ class Navbar extends React.Component {
     this.state = {
       steamNickname: ''
     }
-    console.log('MYPROPS', props);
   }
 
   render() {  

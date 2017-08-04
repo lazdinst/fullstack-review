@@ -6,7 +6,6 @@ class NavSearch extends React.Component {
     this.state = {
       steamNickname: ''
     }
-    console.log('PROPS', props);
   }
 
   onChange (e) {

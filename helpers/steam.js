@@ -48,9 +48,8 @@ let getGamesOwnedBySteamID = (steamID) => {
     });
 }
 
-let getAllGameIds = (steamID) => {
-  let key = '55DA5B587373A31116CAD4B8B4BE3F05';
-  let url = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=' + key +'&steamids=' + steamID;
+let getAllGameIds = () => {
+  let url = 'http://api.steampowered.com/ISteamApps/GetAppList/v0002/';
   console.log('All Games URL: ', url);
   return axios.get(url)
     .then(function (response) {

@@ -5,6 +5,7 @@ const steam = require('../helpers/steam.js');
 const JSONpretty = require('../lib/jsonPretty.js');
 const mongoHelper = require('../database/index.js');
 const steamHelper = require('../database/steam.js');
+const steamGameHelper = require('../database/steamGames.js');
 let app = express();
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -61,6 +62,26 @@ app.post('/api/steamgamesowned', function (req, res, next) {
   steam.getGamesOwnedBySteamID(steamID)
     .then((data) => {
       res.json(data);
+    })
+    .catch((err) => {
+      throw err;      
+    })
+});
+
+
+//POST request to get all Steam Game IDs
+app.post('/api/steamgameids', function (req, res, next) {
+  // var steamID = Object.keys(req.body)[0];
+  steam.getAllGameIds()
+    .then((data) => {
+      //Rather than just returning the data to send it back to the server
+      //It would be best to just add all the games to the database immediately
+
+      //TODO: HELPER FUNCTION WITH DATA TO DATABASE
+      steamGameHelper.save(data.applist.apps);
+      //console.log(data.applist.apps.length);
+      res.end();
+      //res.json(data);
     })
     .catch((err) => {
       throw err;      
